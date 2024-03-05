@@ -1,0 +1,44 @@
+name: Static Code Analyze Branch
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - feature/*
+
+jobs:
+  static_code_analysis:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 'Checkout repository on branch: ${{ github.REF }}'
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.HEAD_REF }}
+
+      - name: Setup python environment
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.11"
+
+      - name: Cache pip
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install dependencies
+        run: |
+          pip install black isort mypy
+
+      - name: Run Black
+        run: black . --check
+
+      - name: Run Isort
+        run: isort . --check --diff
+
+      # - name: Run Mypy
+      #   run: mypy .
