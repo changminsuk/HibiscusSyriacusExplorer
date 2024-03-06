@@ -20,4 +20,8 @@ echo "OK"
 #poetry run toml-sort pyproject.toml --all --in-place
 #echo "OK"
 
+echo "Starting unittest"
+pipenv run python -m unittest discover -s ./test -p '*_test.py' -v
+echo "OK"
+
 echo "${COLOR_GREEN}All tests passed successfully!${COLOR_NC}"
