@@ -1,6 +1,7 @@
 # HibiscusSyriacusExplorer  [![Static Code Analyze](https://github.com/changminsuk/HibiscusSyriacusExplorer/actions/workflows/static_code_analyze.yml/badge.svg)](https://github.com/changminsuk/HibiscusSyriacusExplorer/actions/workflows/static_code_analyze.yml)
  🌺 무궁화 수종 분류 GPT 용 backend
  
+ https://chat.openai.com/g/g-d8xjVnu15-hibiscus-syriacus-explorer
 
 ## Structure
 
@@ -17,12 +18,39 @@
 
 ## how to setup
 
-1. brew install pipenv (pip install pipenv) -- _pipenv 설치_
-2. pipenv --python 3.12 -- _python 3.12 버전으로 가상환경 생성_
-3. pipenv shell -- _가상환경 진입_
-4. pipenv sync -- _필요한 패키지 설치_
-5. pipenv run start -- _서버 실행_
+1. pipenv 설치
+```sh
+brew install pipenv
+```
+```sh
+pip install pipenv
+```
+2. python 3.10 버전으로 가상환경 생성
+```sh
+pipenv --python 3.10
+```
+3. 가상환경 진입
+```sh
+pipenv shell
+```
+4. 필요한 패키지 설치
+```sh
+pipenv sync
+```
+5. 서버 실행
+```sh
+pipenv run start
+```
+<br>
+<br>
 
+- pipenv 환경에서의 패키지 설치
+```sh
+pipenv install [패키지명]
+```
 
-- pipenv 환경에서의 패키지 설치 :  pipenv install [패키지명]
-- pipenv 배포 전 패키지 업데이트 : pipenv update
+- pipenv 배포 전 패키지 업데이트
+```sh
+pipenv update
+```
+
