@@ -1,4 +1,4 @@
-name: Static Code Analyze Branch
+name: Static Code Analyze
 
 on:
   push:
