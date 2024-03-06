@@ -1,5 +1,5 @@
 ---
-name: Deploy Server to AWS EC2
+name: EC2 CodeDeploy
 
 on:
   pull_request:

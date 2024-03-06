@@ -6,12 +6,13 @@ files:
   - source: /
     destination: /home/ubuntu/HibiscusSyriacusExplorer
 file_exists_behavior: OVERWRITE
-#permissions:
-#  - object: /home/ubuntu/HibiscusSyriacusExplorer
-##  - object: /opt/CodeDeployApp/
-#    owner: ubuntu
-#    group: ubuntu
-#    mode: 755
+
+permissions:
+  - object: /home/ubuntu/HibiscusSyriacusExplorer/deploy.sh
+    owner: ubuntu
+    group: ubuntu
+    mode: 755
+
 hooks:
   AfterInstall:
     # location은 프로젝트의 root경로를 기준
@@ -19,4 +20,4 @@ hooks:
       timeout: 180
       runas: ubuntu
 
-# test log
+# test log 2
