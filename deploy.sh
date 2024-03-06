@@ -28,4 +28,6 @@ sudo apt install python3-pip -y
 sudo apt install pipenv -y
 pipenv --python 3.10
 pipenv sync
-pipenv run nohup uvicorn src.app:app --port 8000 --host 0.0.0.0 --reload &
+pipenv run nohup uvicorn src.app:app --port 8000 --host 0.0.0.0 --reload > uvicorn.log 2>&1 &
+
+exit 0
