@@ -26,4 +26,8 @@ async def query_pinecone(
 
     result = await PineconeService.query_pinecone(query_params.dict())
 
-    return ResponseDto(success=True, message="Succeeded in inferring the species of Rose of Sharon.", data=result)
+    return ResponseDto(
+        success=True,
+        message="Succeeded in inferring the species of Rose of Sharon.",
+        data=result,
+    )

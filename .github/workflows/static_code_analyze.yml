@@ -13,17 +13,17 @@ jobs:
 
     steps:
       - name: 'Checkout repository on branch: ${{ github.REF }}'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.1.1
         with:
           ref: ${{ github.HEAD_REF }}
 
       - name: Setup python environment
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5.0.0
         with:
-          python-version: "3.11"
+          python-version: "3.10"
 
       - name: Cache pip
-        uses: actions/cache@v2
+        uses: actions/cache@v4.0.1
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
@@ -32,7 +32,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install black isort mypy
+          pip install black isort mypy fastapi
 
       - name: Run Black
         run: black . --check
@@ -42,3 +42,6 @@ jobs:
 
       # - name: Run Mypy
       #   run: mypy .
+
+      - name: Run unittest
+        run: python -m unittest discover -s ./test -p '*_test.py' -v

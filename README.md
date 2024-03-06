@@ -1,4 +1,4 @@
-# HibiscusSyriacusExplorer  [![Static Code Analyze Branch](https://github.com/changminsuk/HibiscusSyriacusExplorer/actions/workflows/static_code_analyze.yml/badge.svg)](https://github.com/changminsuk/HibiscusSyriacusExplorer/actions/workflows/static_code_analyze.yml)
+# HibiscusSyriacusExplorer  [![Static Code Analyze Branch](https://github.com/changminsuk/HibiscusSyriacusExplorer/actions/workflows/static_code_analyze.yml/badge.svg?branch=main)](https://github.com/changminsuk/HibiscusSyriacusExplorer/actions/workflows/static_code_analyze.yml)
  🌺 무궁화 수종 분류 GPT 용 backend
  
 

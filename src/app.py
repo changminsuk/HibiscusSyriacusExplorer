@@ -25,9 +25,11 @@ def create_app() -> FastAPI:
         title="Hibiscus syriacus Explorer backend API",
         description=description,
         version="0.1.0",
-        servers=[{
-            "url": "https://hibiscussyriacusexplorer.store",
-        }]
+        servers=[
+            {
+                "url": "https://hibiscussyriacusexplorer.store",
+            }
+        ],
     )
 
     # CORS 미들웨어 설정
