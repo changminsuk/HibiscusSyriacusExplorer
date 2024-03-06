@@ -1,0 +1,51 @@
+---
+name: Deploy Server to AWS EC2
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - main
+
+
+# AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION -> GitHub repo secret 사용
+env:
+  PROJECT_NAME: action_codedeploy
+  AWS_ACCESS_KEY_ID: ${{ secrets.AIBLUE_AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AIBLUE_AWS_SECRET_ACCESS_KEY }}
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+  BUCKET_NAME: hibiscusgpt-deploy-bucket
+  APPLICATION_NAME: hibiscusGPT_deploy_app
+  DEPLOYMENT_GROUP_NAME: hibiscusGPT_deploy_group
+
+
+jobs:
+  deploy:
+    name: DEPLOY
+    runs-on: ubuntu-latest
+    # Static Code Analysis 통과 후, PR 이 merge 되었을 때만 실행
+    if: github.event.pull_request.merged == true
+
+    steps:
+      # GitHub Action 에 main branch 의 코드 업로드
+      - name: Checkout
+        uses: actions/checkout@v4.1.1
+
+      # CodeDeploy 배포를 위해서는 S3에 압축 파일 형태로 업로드 필요 (.zip 또는 .tar .tar.gz 등의 방식도 가능)
+      - name: Make zip file
+        run: zip -qq -r ./$GITHUB_SHA.zip .
+        shell: bash
+
+      # S3에 업로드 하기 전, aws 서비스를 사용하기 위해 인증 받는 과정
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4.0.2
+        with:
+          aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      # 위에서 인증받은 aws cli credential 을 이용해 s3 에 업로드 후 배포 진행
+      - name: Upload to S3
+        run: aws s3 cp --region ${{ env.AWS_REGION }} ./$GITHUB_SHA.zip s3://${{ env.BUCKET_NAME }}/$PROJECT_NAME/$GITHUB_SHA.zip
+      - name: Code Deploy
+        run: aws deploy create-deployment --application-name ${{ env.APPLICATION_NAME }} --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name ${{ env.DEPLOYMENT_GROUP_NAME }} --s3-location bucket=${{ env.BUCKET_NAME }},bundleType=zip,key=$PROJECT_NAME/$GITHUB_SHA.zip
