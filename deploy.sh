@@ -23,10 +23,11 @@ sudo swapon  --show
 sudo free -h
 
 # start server with pipenv
-sudo apt update
-sudo apt install python3-pip
-sudo apt install pipenv
+sudo apt update -y
+sudo apt install python3-pip -y
+sudo apt install pipenv -y
 pipenv --python 3.10
-pipenv shell
 pipenv sync
-nohup uvicorn src.app:app --port 8000 --host 0.0.0.0 --reload &
+pipenv run nohup uvicorn src.app:app --port 8000 --host 0.0.0.0 --reload > uvicorn.log 2>&1 &
+
+exit 0
