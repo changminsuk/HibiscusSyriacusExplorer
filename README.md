@@ -1,7 +1,6 @@
-# HibiscusSyriacusExplorer
- 무궁화 수종 분류 GPT 용 backend
-
----
+# HibiscusSyriacusExplorer  [![Static Code Analyze Branch](https://github.com/changminsuk/HibiscusSyriacusExplorer/actions/workflows/static_code_analyze.yml/badge.svg)](https://github.com/changminsuk/HibiscusSyriacusExplorer/actions/workflows/static_code_analyze.yml)
+ 🌺 무궁화 수종 분류 GPT 용 backend
+ 
 
 ## Structure
 
