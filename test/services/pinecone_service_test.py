@@ -6,7 +6,6 @@ from src.services.pinecone_service import PineconeService
 
 # unittest.TestCase를 상속받는 새로운 테스트 클래스를 생성합니다.
 class TestPineconeService(unittest.IsolatedAsyncioTestCase):
-
     # query_pinecone 메소드가 비어있는 결과를 반환하는 경우를 테스트하는 메소드입니다.
     @patch(
         "src.services.pinecone_service.PineconeRepository.query_pinecone",
