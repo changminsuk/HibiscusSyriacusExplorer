@@ -1,7 +1,13 @@
-# HibiscusSyriacusExplorer  [![Static Code Analyze](https://github.com/changminsuk/HibiscusSyriacusExplorer/actions/workflows/static_code_analyze.yml/badge.svg)](https://github.com/changminsuk/HibiscusSyriacusExplorer/actions/workflows/static_code_analyze.yml)  [![EC2 CodeDeploy](https://github.com/changminsuk/HibiscusSyriacusExplorer/actions/workflows/main_pull_request.yml/badge.svg?branch=develop)](https://github.com/changminsuk/HibiscusSyriacusExplorer/actions/workflows/main_pull_request.yml)
- 🌺 무궁화 수종 분류 GPT 용 backend
- 
- https://chat.openai.com/g/g-d8xjVnu15-hibiscus-syriacus-explorer
+# HibiscusSyriacusExplorer
+
+<p align="center">
+ <img src = "https://github.com/changminsuk/HibiscusSyriacusExplorer/assets/94454449/76d4e8da-3d31-4a2e-ad03-41069e456ba6" width="300" height="300">
+</p>
+
+## 🌺 무궁화 수종 분류 GPT 용 backend
+[![Static Code Analyze](https://github.com/changminsuk/HibiscusSyriacusExplorer/actions/workflows/static_code_analyze.yml/badge.svg)](https://github.com/changminsuk/HibiscusSyriacusExplorer/actions/workflows/static_code_analyze.yml)  [![EC2 CodeDeploy](https://github.com/changminsuk/HibiscusSyriacusExplorer/actions/workflows/main_pull_request.yml/badge.svg?branch=develop)](https://github.com/changminsuk/HibiscusSyriacusExplorer/actions/workflows/main_pull_request.yml)
+
+https://chat.openai.com/g/g-d8xjVnu15-hibiscus-syriacus-explorer
 
 ## Structure
 
