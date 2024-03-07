@@ -1,13 +1,30 @@
-# HibiscusSyriacusExplorer
-
 <p align="center">
  <img src = "https://github.com/changminsuk/HibiscusSyriacusExplorer/assets/94454449/76d4e8da-3d31-4a2e-ad03-41069e456ba6" width="300" height="300">
 </p>
 
-## 🌺 무궁화 수종 분류 GPT 용 backend
-[![Static Code Analyze](https://github.com/changminsuk/HibiscusSyriacusExplorer/actions/workflows/static_code_analyze.yml/badge.svg)](https://github.com/changminsuk/HibiscusSyriacusExplorer/actions/workflows/static_code_analyze.yml)  [![EC2 CodeDeploy](https://github.com/changminsuk/HibiscusSyriacusExplorer/actions/workflows/main_pull_request.yml/badge.svg?branch=develop)](https://github.com/changminsuk/HibiscusSyriacusExplorer/actions/workflows/main_pull_request.yml)
+<p align="center">
+    <em>Identifies Hibiscus Syriacus species from photos and provides detailed info from a Vector DB and Google</em>
+</p>
 
-https://chat.openai.com/g/g-d8xjVnu15-hibiscus-syriacus-explorer
+<p align="center">
+<a href="https://github.com/changminsuk/HibiscusSyriacusExplorer/actions/workflows/static_code_analyze.yml" target="_blank">
+   <img src="https://github.com/changminsuk/HibiscusSyriacusExplorer/actions/workflows/static_code_analyze.yml/badge.svg" alt="Static Code Analyze">
+</a>
+<a href="https://github.com/changminsuk/HibiscusSyriacusExplorer/actions/workflows/main_pull_request.yml?branch=develop" target="_blank">
+   <img src="https://github.com/changminsuk/HibiscusSyriacusExplorer/actions/workflows/main_pull_request.yml/badge.svg?branch=develop" alt="EC2 CodeDeploy">
+</a>
+<a href="https://coverage-badge.samuelcolvin.workers.dev/redirect/tiangolo/fastapi" target="_blank">
+    <img src="https://coverage-badge.samuelcolvin.workers.dev/tiangolo/fastapi.svg" alt="Coverage">
+</a>
+<a href="https://pypi.org/project/fastapi" target="_blank">
+    <img src="https://img.shields.io/badge/python-3.10-blue.svg?color=%2334D058" alt="Supported Python version 3.10">
+</a>
+
+</p>
+
+# 🌺 HibiscusSyriacusExplorer Backend API
+> 무궁화 수종 분류 GPT 용 backend<br>
+> 개발기간: 2024.03 ~
 
 ## Structure
 
