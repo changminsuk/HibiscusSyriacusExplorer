@@ -12,7 +12,7 @@ logging.config.fileConfig(config_path, disable_existing_loggers=False)
 logger = logging.getLogger(__name__)
 
 description = """
-## 🌺 This document is an API docs for the CustomGPT backend system for classifying Hibiscus syriacus.
+## 🌺 This document is an API docs for the CustomGPT backend system for classifying Hibiscus syriacus
 ---
 ## 📌 API List
 ### Pinecone
