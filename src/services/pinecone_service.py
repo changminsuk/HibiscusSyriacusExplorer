@@ -23,14 +23,19 @@ class PineconeService:
         description = create_record_request_dto.description
 
         # check if the title already exists in the index of pinecone project.
-        records_with_index_title = await PineconeRepository.get_records_by_title_of_metadata(
-            index=index, title=title
+        records_with_index_title = (
+            await PineconeRepository.get_records_by_title_of_metadata(
+                index=index, title=title
+            )
         )
 
         # if this title already exists in the index, raise an exception.
         if records_with_index_title:
             exception_status = HTTPStatus.CONFLICT
-            raise HTTPException(status_code=exception_status.value, detail=f"{exception_status.phrase}: {title} in {index} index is already exists.")
+            raise HTTPException(
+                status_code=exception_status.value,
+                detail=f"{exception_status.phrase}: {title} in {index} index is already exists.",
+            )
 
         # check if the index exists in the pinecone project before creating a record.
         indexes = await PineconeRepository.get_indexes()
