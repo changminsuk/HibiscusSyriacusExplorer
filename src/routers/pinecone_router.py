@@ -44,6 +44,8 @@ async def query_pinecone(
 ) -> ResponseDto:
     """
     ## After extracting the characteristics of the input image,<br>CustomGPT executes a similarity search in the Pinecone DB.
+
+    Query Example: {"characteristics": "deep pink petals, darker pink center, visible stamens, bushy green leaves"}
     ---
     - **characteristics** (required) : the list of characteristics of the image
     """
