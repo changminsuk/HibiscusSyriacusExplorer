@@ -71,11 +71,9 @@ class PineconeRepository:
             index = pinecone.Index(index)
             records = index.query(
                 vector=dummy_vector,
-                filter={
-                    "title": {"$eq": title}
-                },
+                filter={"title": {"$eq": title}},
                 top_k=1,
-                include_metadata=True
+                include_metadata=True,
             )
 
             return records
