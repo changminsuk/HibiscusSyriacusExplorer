@@ -27,8 +27,13 @@ def create_app() -> FastAPI:
         version="0.1.0",
         servers=[
             {
+                "url": "http://localhost:8000",
+                "description": "Local server",
+            },
+            {
                 "url": "https://hibiscussyriacusexplorer.store",
-            }
+                "description": "Production server",
+            },
         ],
     )
 
