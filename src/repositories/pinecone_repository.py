@@ -27,7 +27,7 @@ def process_param(key, value: str, index):
 
     result = index.query(
         vector=vector,
-        top_k=3,
+        top_k=30,
         include_metadata=True,
         filter={
             "column": {"$eq": korean_key},
@@ -66,7 +66,7 @@ def process_arrange_param(key, value: float, index):
 
     result = index.query(
         vector=vector,
-        top_k=3,
+        top_k=30,
         include_metadata=True,
         filter={
             "column": {"$eq": korean_key},
