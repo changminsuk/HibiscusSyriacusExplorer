@@ -3,7 +3,7 @@ from io import BytesIO
 import pandas as pd
 from fastapi import APIRouter, Body, Depends, UploadFile, File, HTTPException
 
-from src.dtos.base_dto import ResponseDto
+from src.dtos.base_dto import ResponseDto, GPTQueryResponseDto
 from src.dtos.pinecone_dto import *
 from src.services.pinecone_service import PineconeService
 
@@ -700,14 +700,14 @@ async def create_records_with_excel_tooth(
 
 @pinecone_router.get(
     "/queryPinecone",
-    response_model=ResponseDto,
+    response_model=GPTQueryResponseDto,
     summary="Upon receiving a GET request this endpoint will return species that are similar to the input image."
             "leaflet_count : -1 ~ 25, leaf_length : -1 ~ 50, leaf_width : -1 ~ 30",
     response_description="The species that are similar to the input image.",
 )
 async def query_pinecone(
         query_params: QueryPineconeRequestDto = Depends(),
-) -> ResponseDto:
+) -> GPTQueryResponseDto:
     """
     ## After extracting the characteristics of the input image,<br>CustomGPT executes a similarity search in the Pinecone DB.
 
@@ -716,7 +716,7 @@ async def query_pinecone(
 
     result = await PineconeService.query_pinecone(query_params.dict())
 
-    return ResponseDto(
+    return GPTQueryResponseDto(
         success=True,
         message="Succeeded in inferring the species that are similar to the input image.",
         data=result,
