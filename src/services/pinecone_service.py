@@ -1,6 +1,7 @@
 import logging
 from http import HTTPStatus
 
+import pandas as pd
 from fastapi import HTTPException
 
 from src.dtos.pinecone_dto import CreateRecordRequestDto
@@ -16,29 +17,30 @@ class PineconeService:
         create a record in the index of pinecone project.
         from. POST /pinecone/createRecord API
         ---
-        @param create_record_request_dto: {index: str, title: str, description: str}
+        @param create_record_request_dto: {index: str, title: str, description: str, column: str}
         """
-        index = create_record_request_dto.index
-        title = create_record_request_dto.title
-        description = create_record_request_dto.description
+        index: str = create_record_request_dto.index
+        title: str = create_record_request_dto.title
+        description: str = create_record_request_dto.description
+        column: str = create_record_request_dto.column
 
         # check if the title already exists in the index of pinecone project.
-        records_with_index_title = (
-            await PineconeRepository.get_records_by_title_of_metadata(
-                index=index, title=title
-            )
-        )
-
-        # if this title already exists in the index, raise an exception.
-        if records_with_index_title:
-            exception_status = HTTPStatus.CONFLICT
-            raise HTTPException(
-                status_code=exception_status.value,
-                detail=f"{exception_status.phrase}: {title} in {index} index is already exists.",
-            )
+        # records_with_index_title = (
+        #     await PineconeRepository.get_records_by_title_of_metadata(
+        #         index=index, title=title
+        #     )
+        # )
+        #
+        # # if this title already exists in the index, raise an exception.
+        # if records_with_index_title:
+        #     exception_status = HTTPStatus.CONFLICT
+        #     raise HTTPException(
+        #         status_code=exception_status.value,
+        #         detail=f"{exception_status.phrase}: {column}/{title} in {index} index is already exists.",
+        #     )
 
         # check if the index exists in the pinecone project before creating a record.
-        indexes = await PineconeRepository.get_indexes()
+        indexes = PineconeRepository.get_indexes()
         if index not in indexes:
             exception_status = HTTPStatus.NOT_FOUND
             raise HTTPException(
@@ -47,10 +49,35 @@ class PineconeService:
 
         # create a record in the index of pinecone project.
         result = await PineconeRepository.create_record(
-            index=index, title=title, description=description
+            index=index, description=description,
+            metadata={
+                "title": title,
+                "column": column
+            }
         )
 
         return result
+
+    @staticmethod
+    async def upload_excel_to_pinecone(file_path: str, index: str):
+        try:
+            df = pd.read_excel(file_path)
+            for _, row in df.iterrows():
+                title = row['Title']  # assuming the excel file has a column named 'Title'
+                description = row['Description']  # assuming the excel file has a column named 'Description'
+                create_record_request_dto = CreateRecordRequestDto(
+                    index=index,
+                    title=title,
+                    description=description
+                )
+                await PineconeService.create_record(create_record_request_dto)
+            return {"result": "Excel data loaded successfully into Pinecone"}
+        except Exception as e:
+            logger.error(f"Error loading Excel data to Pinecone: {str(e)}")
+            raise HTTPException(
+                status_code=HTTPStatus.INTERNAL_SERVER_ERROR.value,
+                detail=str(e)
+            )
 
     @staticmethod
     async def query_pinecone(param: dict):

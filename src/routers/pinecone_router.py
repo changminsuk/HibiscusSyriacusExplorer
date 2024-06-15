@@ -16,7 +16,7 @@ pinecone_router = APIRouter(
     response_description="The record has been created successfully.",
 )
 async def create_record(
-    request_body: CreateRecordRequestDto = Body(...),
+        request_body: CreateRecordRequestDto = Body(...),
 ) -> ResponseDto:
     """
     ## Create a record in the classify Index of HibiscusGPT project.
@@ -36,24 +36,23 @@ async def create_record(
 @pinecone_router.get(
     "/queryPinecone",
     response_model=ResponseDto,
-    summary="Upon receiving a GET request this endpoint will return species that are similar to the input image.",
+    summary="Upon receiving a GET request this endpoint will return species that are similar to the input image."
+            "leaflet_count : -1 ~ 25, leaf_length : -1 ~ 50, leaf_width : -1 ~ 30",
     response_description="The species that are similar to the input image.",
 )
 async def query_pinecone(
-    query_params: QueryPineconeRequestDto = Depends(),
+        query_params: QueryPineconeRequestDto = Depends(),
 ) -> ResponseDto:
     """
     ## After extracting the characteristics of the input image,<br>CustomGPT executes a similarity search in the Pinecone DB.
 
-    Query Example: {"characteristics": "deep pink petals, darker pink center, visible stamens, bushy green leaves"}
-    ---
-    - **characteristics** (required) : the list of characteristics of the image
+    ## EVERY PARAMETER IS REQUIRED.
     """
 
     result = await PineconeService.query_pinecone(query_params.dict())
 
     return ResponseDto(
         success=True,
-        message="Succeeded in inferring the species of Rose of Sharon.",
+        message="Succeeded in inferring the species that are similar to the input image.",
         data=result,
     )

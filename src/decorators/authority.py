@@ -16,8 +16,8 @@ def verify_authority(token_entity: TokenEntity, input_id: str):
     :return:
     """
     if (
-        token_entity.token_type != config.APIKeyHeader.ADMIN.value
-        and token_entity.shop.id != input_id
+            token_entity.token_type != config.APIKeyHeader.ADMIN.value
+            and token_entity.shop.id != input_id
     ):
         raise HTTPException(
             status_code=HTTPStatus.FORBIDDEN.value, detail=HTTPStatus.FORBIDDEN.phrase

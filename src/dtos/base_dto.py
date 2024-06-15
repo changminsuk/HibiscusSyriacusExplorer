@@ -1,4 +1,4 @@
-from typing import Optional, Union
+from typing import Any
 
 from pydantic import BaseModel, Field
 
@@ -9,7 +9,8 @@ class ResponseDto(BaseModel):
 
     success: bool = Field(description="Response status")
     message: str = Field(description="Response message")
-    data: Optional[Union[str, dict]] = Field(description="Response data", default=None)
+    # data: Optional[Union[str, dict]] = Field(description="Response data", default=None)
+    data: Any = Field(description="Response data", default=None)
 
 
 class TokenEntity(BaseModel):
