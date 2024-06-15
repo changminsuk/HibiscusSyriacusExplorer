@@ -100,3 +100,11 @@ class QueryPineconeRequestDto(BaseModel):
     leaf_topside_hair: BasicTypeEnum = Field(BasicTypeEnum.unknown, description="잎앞면털은 있음, 없음, 모름 중 하나여야 합니다.")
     leaf_arrangement: LeafArrangementEnum = Field(LeafArrangementEnum.unknown, description="잎나눔은 어긋나기, 마주나기, 돌려나기, 모여나기, 모름 중 하나여야 합니다.")
     tooth: BasicTypeEnum = Field(BasicTypeEnum.unknown, description="톱니는 있음, 없음, 모름 중 하나여야 합니다.")
+
+
+class QueryWithTitleRequestDto(BaseModel):
+    title: str
+
+
+class DeleteColumnRequestDto(BaseModel):
+    column: str

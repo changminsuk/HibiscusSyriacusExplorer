@@ -1,5 +1,6 @@
 import logging
 from http import HTTPStatus
+from typing import List
 
 import pandas as pd
 from fastapi import HTTPException
@@ -59,6 +60,22 @@ class PineconeService:
         return result
 
     @staticmethod
+    async def create_records(records: List[CreateRecordRequestDto]):
+
+        # check if the index exists in the pinecone project before creating a record.
+        indexes = PineconeRepository.get_indexes()
+        if records[0].index not in indexes:
+            exception_status = HTTPStatus.NOT_FOUND
+            raise HTTPException(
+                status_code=exception_status.value, detail=exception_status.phrase
+            )
+
+        # create a record in the index of pinecone project.
+        result = await PineconeRepository.create_records(records=records)
+
+        return result
+
+    @staticmethod
     async def upload_excel_to_pinecone(file_path: str, index: str):
         try:
             df = pd.read_excel(file_path)
@@ -94,5 +111,29 @@ class PineconeService:
             raise HTTPException(
                 status_code=exception_status.value, detail=exception_status.phrase
             )
+
+        return result
+
+    @staticmethod
+    async def query_with_title(title: str):
+        """
+        get records by title of metadata in the index of pinecone project.
+        from. GET /pinecone/queryWithTitle API
+        ---
+        @param title: str
+        """
+        result = await PineconeRepository.query_with_title(title=title)
+
+        return result
+
+    @staticmethod
+    async def delete_column(column: str):
+        """
+        delete a column in the index of pinecone project.
+        from. DELETE /pinecone/deleteColumn API
+        ---
+        @param column: str
+        """
+        result = await PineconeRepository.delete_column(column=column)
 
         return result
