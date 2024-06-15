@@ -8,15 +8,12 @@ from langchain.embeddings import OpenAIEmbeddings
 from langchain.schema.document import Document
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 
-from src.dtos.pinecone_dto import CreateRecordRequestDto
+from src.dtos.pinecone_dto import CreateRecordRequestDto, CreateArrangeRecordRequestDto
 from src.utils import config
 
 
-def process_param(key, value, index):
+def process_param(key, value: str, index):
     korean_key = config.Columns[key].value
-
-    if type(value) is int:
-        return korean_key, None
 
     if not value:
         raise HTTPException(
@@ -33,6 +30,47 @@ def process_param(key, value, index):
         include_metadata=True,
         filter={
             "column": {"$eq": korean_key},
+        }
+    )
+
+    if not result["matches"]:
+        return korean_key, None
+
+    serializable_result = {
+        "matches": [
+            {
+                "id": match.id,
+                "score": match.score,
+                "metadata": match.metadata
+            }
+            for match in result["matches"]
+        ]
+    }
+
+    return korean_key, serializable_result
+
+
+def process_arrange_param(key, value: int, index):
+    print(f"process_arrange_param   {key} {value}\n")
+    korean_key = config.Columns[key].value
+
+    if not value:
+        raise HTTPException(
+            status_code=HTTPStatus.BAD_REQUEST.value,
+            detail=f"Missing parameter: {korean_key}",
+        )
+
+    embeddings = OpenAIEmbeddings()
+    vector = embeddings.embed_query(korean_key)
+
+    result = index.query(
+        vector=vector,
+        top_k=5,
+        include_metadata=True,
+        filter={
+            "column": {"$eq": korean_key},
+            "min": {"$lte": value},
+            "max": {"$gte": value}
         }
     )
 
@@ -151,6 +189,52 @@ class PineconeRepository:
             )
 
     @staticmethod
+    async def create_arrange_records(records: list[CreateArrangeRecordRequestDto]):
+        """
+        Create multiple records in the index of Pinecone project.
+        ---
+        @param records: list of CreateRecordRequestDto
+        """
+        try:
+            all_pinecone_vectors = []
+
+            for record in records:
+                index = record.index
+                metadata = {
+                    "title": record.title,
+                    "column": record.column,
+                    "min": record.min,
+                    "max": record.max,
+                }
+
+                splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder()
+                docs = [
+                    Document(page_content=x, metadata=metadata)
+                    for x in splitter.split_text(record.title)
+                ]
+
+                embeddings = OpenAIEmbeddings()
+                vectors = embeddings.embed_documents([doc.page_content for doc in docs])
+
+                pinecone_vectors = [
+                    {"id": str(uuid.uuid4()), "values": vector, "metadata": doc.metadata}
+                    for vector, doc in zip(vectors, docs)
+                ]
+
+                all_pinecone_vectors.extend(pinecone_vectors)
+
+            # Assuming all records use the same index
+            index = pinecone.Index(records[0].index)
+            index.upsert(vectors=all_pinecone_vectors)
+
+            return {"result": f"{len(records)} records created successfully!"}
+        except Exception as e:
+            print(1, e)
+            raise HTTPException(
+                status_code=HTTPStatus.INTERNAL_SERVER_ERROR.value, detail=str(e)
+            )
+
+    @staticmethod
     def get_indexes():
         """
         get indexes from pinecone.
@@ -176,7 +260,12 @@ class PineconeRepository:
 
             with ThreadPoolExecutor() as executor:
                 futures = [
-                    executor.submit(process_param, key, value, index)
+                    executor.submit(
+                        process_param if type(value) is not int else process_arrange_param,
+                        key,
+                        value,
+                        index,
+                    )
                     for key, value in param.items()
                 ]
 

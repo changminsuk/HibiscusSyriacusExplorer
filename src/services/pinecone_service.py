@@ -5,7 +5,7 @@ from typing import List
 import pandas as pd
 from fastapi import HTTPException
 
-from src.dtos.pinecone_dto import CreateRecordRequestDto
+from src.dtos.pinecone_dto import CreateRecordRequestDto, CreateArrangeRecordRequestDto
 from src.repositories.pinecone_repository import PineconeRepository
 
 logger = logging.getLogger(__name__)
@@ -72,6 +72,22 @@ class PineconeService:
 
         # create a record in the index of pinecone project.
         result = await PineconeRepository.create_records(records=records)
+
+        return result
+
+    @staticmethod
+    async def create_arrange_records(records: List[CreateArrangeRecordRequestDto]):
+
+        # check if the index exists in the pinecone project before creating a record.
+        indexes = PineconeRepository.get_indexes()
+        if records[0].index not in indexes:
+            exception_status = HTTPStatus.NOT_FOUND
+            raise HTTPException(
+                status_code=exception_status.value, detail=exception_status.phrase
+            )
+
+        # create a record in the index of pinecone project.
+        result = await PineconeRepository.create_arrange_records(records=records)
 
         return result
 

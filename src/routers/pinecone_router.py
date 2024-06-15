@@ -46,7 +46,7 @@ async def create_records_with_excel_serration(
         file: UploadFile = File(...),
 ) -> ResponseDto:
     """
-    ## Create records from an Excel file in the classify Index of HibiscusGPT project.
+    ## Create Serration records from an Excel file in the classify Index of HibiscusGPT project.
     ---
     - **file** (required) : the Excel file containing records
     """
@@ -82,7 +82,7 @@ async def create_records_with_excel_serration(
         return ResponseDto(
             success=True,
             message=result["result"],
-            # data=result,
+            data=result,
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -98,7 +98,7 @@ async def create_records_with_excel_shape(
         file: UploadFile = File(...),
 ) -> ResponseDto:
     """
-    ## Create records from an Excel file in the classify Index of HibiscusGPT project.
+    ## Create Shape records from an Excel file in the classify Index of HibiscusGPT project.
     ---
     - **file** (required) : the Excel file containing records
     """
@@ -126,10 +126,54 @@ async def create_records_with_excel_shape(
                 koreanDescription = ','.join(koreanDiscriptionList)
                 records.append(CreateRecordRequestDto(index="classify", title=title, description=koreanDescription, column="생김새"))
 
-        print(records)
-
         # Call the PineconeService to create records
         result = await PineconeService.create_records(records)
+
+        return ResponseDto(
+            success=True,
+            message=result["result"],
+            data=result,
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@pinecone_router.post(
+    "/createRecordsWithExcelLeafletCount",
+    response_model=ResponseDto,
+    summary="Create Leaflet Count records from an Excel file in the classify Index of HibiscusGPT project.",
+    response_description="The records have been created successfully.",
+)
+async def create_records_with_excel_leaflet_count(
+        file: UploadFile = File(...),
+) -> ResponseDto:
+    """
+    ## Create Leaflet Count records from an Excel file in the classify Index of HibiscusGPT project.
+    ---
+    - **file** (required) : the Excel file containing records
+    """
+
+    try:
+        # Read the Excel file
+        contents = await file.read()
+        df = pd.read_excel(BytesIO(contents))
+
+        # Ensure the required columns are present
+        if '수종' not in df.columns or 'MIN' not in df.columns or 'MAX' not in df.columns or '소엽갯수' not in df.columns:
+            raise HTTPException(status_code=400, detail="Excel file must contain 'title' and 'MIN' columns and 'MAX' columns")
+
+        # Create a list of CreateRecordRequestDto
+        records = []
+        for _, row in df.iterrows():
+            title = row['수종']
+            min = row['MIN']
+            max = row['MAX']
+
+            if pd.notna(title) and pd.notna(min) and pd.notna(max):
+                records.append(CreateArrangeRecordRequestDto(index="classify", title=title, min=min, max=max, column="소엽갯수"))
+
+        # Call the PineconeService to create records
+        result = await PineconeService.create_arrange_records(records)
 
         return ResponseDto(
             success=True,

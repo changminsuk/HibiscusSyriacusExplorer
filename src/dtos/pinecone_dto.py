@@ -10,6 +10,14 @@ class CreateRecordRequestDto(BaseModel):
     column: str
 
 
+class CreateArrangeRecordRequestDto(BaseModel):
+    index: str = "classify"
+    title: str
+    min: int
+    max: int
+    column: str
+
+
 class BasicTypeEnum(str, Enum):
     present = "있음"
     absent = "없음"
