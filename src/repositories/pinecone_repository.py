@@ -13,6 +13,7 @@ from src.utils import config
 
 
 def process_param(key, value: str, index):
+    print(f"process_param   {key} {value}\n")
     korean_key = config.Columns[key].value
 
     if not value:
@@ -26,7 +27,7 @@ def process_param(key, value: str, index):
 
     result = index.query(
         vector=vector,
-        top_k=5,
+        top_k=3,
         include_metadata=True,
         filter={
             "column": {"$eq": korean_key},
@@ -50,7 +51,7 @@ def process_param(key, value: str, index):
     return korean_key, serializable_result
 
 
-def process_arrange_param(key, value: int, index):
+def process_arrange_param(key, value: float, index):
     print(f"process_arrange_param   {key} {value}\n")
     korean_key = config.Columns[key].value
 
@@ -65,7 +66,7 @@ def process_arrange_param(key, value: int, index):
 
     result = index.query(
         vector=vector,
-        top_k=5,
+        top_k=3,
         include_metadata=True,
         filter={
             "column": {"$eq": korean_key},
@@ -261,7 +262,7 @@ class PineconeRepository:
             with ThreadPoolExecutor() as executor:
                 futures = [
                     executor.submit(
-                        process_param if type(value) is not int else process_arrange_param,
+                        process_param if type(value) is not float else process_arrange_param,
                         key,
                         value,
                         index,
