@@ -15,11 +15,15 @@ class ResponseDto(BaseModel):
 
 class SpeciesDto(BaseModel):
     totalScore: float = Field(description="The total similarity score for the species")
-    details: Dict[str, float] = Field(description="Detailed similarity scores for specific attributes")
+    details: Dict[str, float] = Field(
+        description="Detailed similarity scores for specific attributes"
+    )
 
 
 class GPTQueryResponseDataDto(BaseModel):
-    __root__: Dict[str, SpeciesDto] = Field(description="Mapping of species names to their similarity scores")
+    __root__: Dict[str, SpeciesDto] = Field(
+        description="Mapping of species names to their similarity scores"
+    )
 
 
 class GPTQueryResponseDto(BaseModel):
@@ -40,17 +44,17 @@ class GPTQueryResponseDto(BaseModel):
                         "totalScore": 2.00732351,
                         "details": {
                             "톱니": {"value": 1.00587869},
-                            "결각": {"value": 1.00144482}
-                        }
+                            "결각": {"value": 1.00144482},
+                        },
                     },
                     "잣나무": {
                         "totalScore": 1.8713784809999998,
                         "details": {
                             "잎차례": {"value": 1.0039922},
-                            "잎길이": {"value": 0.867386281}
-                        }
-                    }
-                }
+                            "잎길이": {"value": 0.867386281},
+                        },
+                    },
+                },
             }
         }
 

@@ -1,9 +1,9 @@
 from io import BytesIO
 
 import pandas as pd
-from fastapi import APIRouter, Body, Depends, UploadFile, File, HTTPException
+from fastapi import APIRouter, Body, Depends, File, HTTPException, UploadFile
 
-from src.dtos.base_dto import ResponseDto, GPTQueryResponseDto
+from src.dtos.base_dto import GPTQueryResponseDto, ResponseDto
 from src.dtos.pinecone_dto import *
 from src.services.pinecone_service import PineconeService
 
@@ -57,22 +57,32 @@ async def create_records_with_excel_serration(
         df = pd.read_excel(BytesIO(contents))
 
         # Ensure the required columns are present
-        if '수종' not in df.columns or '결각' not in df.columns:
-            raise HTTPException(status_code=400, detail="Excel file must contain 'title' and 'description' columns")
+        if "수종" not in df.columns or "결각" not in df.columns:
+            raise HTTPException(
+                status_code=400,
+                detail="Excel file must contain 'title' and 'description' columns",
+            )
 
         # Create a list of CreateRecordRequestDto
         records = []
         for _, row in df.iterrows():
-            title = row['수종']
-            description = row['결각']
+            title = row["수종"]
+            description = row["결각"]
 
             if pd.notna(title) and pd.notna(description):
-                descriptionList = str(description).split(' ')
+                descriptionList = str(description).split(" ")
                 koreanDiscriptionList = []
                 for i in descriptionList:
                     koreanDiscriptionList.append(list(BasicTypeEnum)[int(i) - 1].value)
-                koreanDescription = ','.join(koreanDiscriptionList)
-                records.append(CreateRecordRequestDto(index="classify", title=title, description=koreanDescription, column="결각"))
+                koreanDescription = ",".join(koreanDiscriptionList)
+                records.append(
+                    CreateRecordRequestDto(
+                        index="classify",
+                        title=title,
+                        description=koreanDescription,
+                        column="결각",
+                    )
+                )
 
         print(records)
 
@@ -109,22 +119,32 @@ async def create_records_with_excel_shape(
         df = pd.read_excel(BytesIO(contents))
 
         # Ensure the required columns are present
-        if '수종' not in df.columns or '생김새' not in df.columns:
-            raise HTTPException(status_code=400, detail="Excel file must contain 'title' and 'description' columns")
+        if "수종" not in df.columns or "생김새" not in df.columns:
+            raise HTTPException(
+                status_code=400,
+                detail="Excel file must contain 'title' and 'description' columns",
+            )
 
         # Create a list of CreateRecordRequestDto
         records = []
         for _, row in df.iterrows():
-            title = row['수종']
-            description = row['생김새']
+            title = row["수종"]
+            description = row["생김새"]
 
             if pd.notna(title) and pd.notna(description):
-                descriptionList = str(description).split(' ')
+                descriptionList = str(description).split(" ")
                 koreanDiscriptionList = []
                 for i in descriptionList:
                     koreanDiscriptionList.append(list(ShapeEnum)[int(i) - 1].value)
-                koreanDescription = ','.join(koreanDiscriptionList)
-                records.append(CreateRecordRequestDto(index="classify", title=title, description=koreanDescription, column="생김새"))
+                koreanDescription = ",".join(koreanDiscriptionList)
+                records.append(
+                    CreateRecordRequestDto(
+                        index="classify",
+                        title=title,
+                        description=koreanDescription,
+                        column="생김새",
+                    )
+                )
 
         # Call the PineconeService to create records
         result = await PineconeService.create_records(records)
@@ -159,18 +179,30 @@ async def create_records_with_excel_leaflet_count(
         df = pd.read_excel(BytesIO(contents))
 
         # Ensure the required columns are present
-        if '수종' not in df.columns or 'MIN' not in df.columns or 'MAX' not in df.columns or '소엽갯수' not in df.columns:
-            raise HTTPException(status_code=400, detail="Excel file must contain 'title' and 'MIN' columns and 'MAX' columns")
+        if (
+                "수종" not in df.columns
+                or "MIN" not in df.columns
+                or "MAX" not in df.columns
+                or "소엽갯수" not in df.columns
+        ):
+            raise HTTPException(
+                status_code=400,
+                detail="Excel file must contain 'title' and 'MIN' columns and 'MAX' columns",
+            )
 
         # Create a list of CreateRecordRequestDto
         records = []
         for _, row in df.iterrows():
-            title = row['수종']
-            min = row['MIN']
-            max = row['MAX']
+            title = row["수종"]
+            min = row["MIN"]
+            max = row["MAX"]
 
             if pd.notna(title) and pd.notna(min) and pd.notna(max):
-                records.append(CreateArrangeRecordRequestDto(index="classify", title=title, min=min, max=max, column="소엽갯수"))
+                records.append(
+                    CreateArrangeRecordRequestDto(
+                        index="classify", title=title, min=min, max=max, column="소엽갯수"
+                    )
+                )
 
         # Call the PineconeService to create records
         result = await PineconeService.create_arrange_records(records)
@@ -205,18 +237,30 @@ async def create_records_with_excel_leaf_length(
         df = pd.read_excel(BytesIO(contents))
 
         # Ensure the required columns are present
-        if '수종' not in df.columns or 'MIN' not in df.columns or 'MAX' not in df.columns or '잎길이' not in df.columns:
-            raise HTTPException(status_code=400, detail="Excel file must contain 'title' and 'MIN' columns and 'MAX' columns")
+        if (
+                "수종" not in df.columns
+                or "MIN" not in df.columns
+                or "MAX" not in df.columns
+                or "잎길이" not in df.columns
+        ):
+            raise HTTPException(
+                status_code=400,
+                detail="Excel file must contain 'title' and 'MIN' columns and 'MAX' columns",
+            )
 
         # Create a list of CreateRecordRequestDto
         records = []
         for _, row in df.iterrows():
-            title = row['수종']
-            min = row['MIN']
-            max = row['MAX']
+            title = row["수종"]
+            min = row["MIN"]
+            max = row["MAX"]
 
             if pd.notna(title) and pd.notna(min) and pd.notna(max):
-                records.append(CreateArrangeRecordRequestDto(index="classify", title=title, min=min, max=max, column="잎길이"))
+                records.append(
+                    CreateArrangeRecordRequestDto(
+                        index="classify", title=title, min=min, max=max, column="잎길이"
+                    )
+                )
 
         # Call the PineconeService to create records
         result = await PineconeService.create_arrange_records(records)
@@ -251,8 +295,11 @@ async def create_records_with_excel_leaf_tip(
         df = pd.read_excel(BytesIO(contents))
 
         # Ensure the required columns are present
-        if '수종' not in df.columns or '잎끝(엽선)' not in df.columns:
-            raise HTTPException(status_code=400, detail="Excel file must contain 'title' and 'description' columns")
+        if "수종" not in df.columns or "잎끝(엽선)" not in df.columns:
+            raise HTTPException(
+                status_code=400,
+                detail="Excel file must contain 'title' and 'description' columns",
+            )
 
         # Create a list of CreateRecordRequestDto
         records = []
@@ -270,16 +317,23 @@ async def create_records_with_excel_leaf_tip(
         }
 
         for _, row in df.iterrows():
-            title = row['수종']
-            description = row['코드']
+            title = row["수종"]
+            description = row["코드"]
 
             if pd.notna(title) and pd.notna(description):
-                descriptionList = str(description).split(' ')
+                descriptionList = str(description).split(" ")
                 koreanDiscriptionList = []
                 for i in descriptionList:
                     koreanDiscriptionList.append(mappingTable[i])
-                koreanDescription = ','.join(koreanDiscriptionList)
-                records.append(CreateRecordRequestDto(index="classify", title=title, description=koreanDescription, column="잎끝"))
+                koreanDescription = ",".join(koreanDiscriptionList)
+                records.append(
+                    CreateRecordRequestDto(
+                        index="classify",
+                        title=title,
+                        description=koreanDescription,
+                        column="잎끝",
+                    )
+                )
 
         # Call the PineconeService to create records
         result = await PineconeService.create_records(records)
@@ -314,18 +368,30 @@ async def create_records_with_excel_leaf_width(
         df = pd.read_excel(BytesIO(contents))
 
         # Ensure the required columns are present
-        if '수종' not in df.columns or 'MIN' not in df.columns or 'MAX' not in df.columns or '잎너비' not in df.columns:
-            raise HTTPException(status_code=400, detail="Excel file must contain 'title' and 'MIN' columns and 'MAX' columns")
+        if (
+                "수종" not in df.columns
+                or "MIN" not in df.columns
+                or "MAX" not in df.columns
+                or "잎너비" not in df.columns
+        ):
+            raise HTTPException(
+                status_code=400,
+                detail="Excel file must contain 'title' and 'MIN' columns and 'MAX' columns",
+            )
 
         # Create a list of CreateRecordRequestDto
         records = []
         for _, row in df.iterrows():
-            title = row['수종']
-            min = row['MIN']
-            max = row['MAX']
+            title = row["수종"]
+            min = row["MIN"]
+            max = row["MAX"]
 
             if pd.notna(title) and pd.notna(min) and pd.notna(max):
-                records.append(CreateArrangeRecordRequestDto(index="classify", title=title, min=min, max=max, column="잎너비"))
+                records.append(
+                    CreateArrangeRecordRequestDto(
+                        index="classify", title=title, min=min, max=max, column="잎너비"
+                    )
+                )
 
         # Call the PineconeService to create records
         result = await PineconeService.create_arrange_records(records)
@@ -360,24 +426,34 @@ async def create_records_with_excel_leaf_underside_hair(
         df = pd.read_excel(BytesIO(contents))
 
         # Ensure the required columns are present
-        if '수종' not in df.columns or '잎뒷면털' not in df.columns:
-            raise HTTPException(status_code=400, detail="Excel file must contain 'title' and 'description' columns")
+        if "수종" not in df.columns or "잎뒷면털" not in df.columns:
+            raise HTTPException(
+                status_code=400,
+                detail="Excel file must contain 'title' and 'description' columns",
+            )
 
         # Create a list of CreateRecordRequestDto
         records = []
         for _, row in df.iterrows():
-            title = row['수종']
-            description = row['코드']
+            title = row["수종"]
+            description = row["코드"]
 
             if (pd.notna(title) and pd.notna(description)) is False:
                 continue
 
-            descriptionList = str(description).split(' ')
+            descriptionList = str(description).split(" ")
             koreanDiscriptionList = []
             for i in descriptionList:
                 koreanDiscriptionList.append(list(BasicTypeEnum)[int(i) - 1].value)
-            koreanDescription = ','.join(koreanDiscriptionList)
-            records.append(CreateRecordRequestDto(index="classify", title=title, description=koreanDescription, column="잎뒷면털"))
+            koreanDescription = ",".join(koreanDiscriptionList)
+            records.append(
+                CreateRecordRequestDto(
+                    index="classify",
+                    title=title,
+                    description=koreanDescription,
+                    column="잎뒷면털",
+                )
+            )
 
         print(records)
 
@@ -414,8 +490,11 @@ async def create_records_with_excel_leaf_blade(
         df = pd.read_excel(BytesIO(contents))
 
         # Ensure the required columns are present
-        if '수종' not in df.columns or '잎몸(잎모양)' not in df.columns:
-            raise HTTPException(status_code=400, detail="Excel file must contain 'title' and 'description' columns")
+        if "수종" not in df.columns or "잎몸(잎모양)" not in df.columns:
+            raise HTTPException(
+                status_code=400,
+                detail="Excel file must contain 'title' and 'description' columns",
+            )
 
         # Create a list of CreateRecordRequestDto
         records = []
@@ -439,16 +518,23 @@ async def create_records_with_excel_leaf_blade(
         }
 
         for _, row in df.iterrows():
-            title = row['수종']
-            description = row['코드']
+            title = row["수종"]
+            description = row["코드"]
 
             if pd.notna(title) and pd.notna(description):
-                descriptionList = str(description).strip().split(' ')
+                descriptionList = str(description).strip().split(" ")
                 koreanDiscriptionList = []
                 for i in descriptionList:
                     koreanDiscriptionList.append(mappingTable[i])
-                koreanDescription = ','.join(koreanDiscriptionList)
-                records.append(CreateRecordRequestDto(index="classify", title=title, description=koreanDescription, column="잎몸"))
+                koreanDescription = ",".join(koreanDiscriptionList)
+                records.append(
+                    CreateRecordRequestDto(
+                        index="classify",
+                        title=title,
+                        description=koreanDescription,
+                        column="잎몸",
+                    )
+                )
 
         print(records)
         # Call the PineconeService to create records
@@ -484,8 +570,11 @@ async def create_records_with_excel_leaf_base(
         df = pd.read_excel(BytesIO(contents))
 
         # Ensure the required columns are present
-        if '수종' not in df.columns or '잎밑' not in df.columns:
-            raise HTTPException(status_code=400, detail="Excel file must contain 'title' and 'description' columns")
+        if "수종" not in df.columns or "잎밑" not in df.columns:
+            raise HTTPException(
+                status_code=400,
+                detail="Excel file must contain 'title' and 'description' columns",
+            )
 
         # Create a list of CreateRecordRequestDto
         records = []
@@ -506,16 +595,23 @@ async def create_records_with_excel_leaf_base(
         }
 
         for _, row in df.iterrows():
-            title = row['수종']
-            description = row['코드']
+            title = row["수종"]
+            description = row["코드"]
 
             if pd.notna(title) and pd.notna(description):
-                descriptionList = str(description).strip().split(' ')
+                descriptionList = str(description).strip().split(" ")
                 koreanDiscriptionList = []
                 for i in descriptionList:
                     koreanDiscriptionList.append(mappingTable[i])
-                koreanDescription = ','.join(koreanDiscriptionList)
-                records.append(CreateRecordRequestDto(index="classify", title=title, description=koreanDescription, column="잎밑"))
+                koreanDescription = ",".join(koreanDiscriptionList)
+                records.append(
+                    CreateRecordRequestDto(
+                        index="classify",
+                        title=title,
+                        description=koreanDescription,
+                        column="잎밑",
+                    )
+                )
 
         print(records)
         # Call the PineconeService to create records
@@ -551,24 +647,34 @@ async def create_records_with_excel_leaf_topside_hair(
         df = pd.read_excel(BytesIO(contents))
 
         # Ensure the required columns are present
-        if '수종' not in df.columns or '잎앞면털' not in df.columns:
-            raise HTTPException(status_code=400, detail="Excel file must contain 'title' and 'description' columns")
+        if "수종" not in df.columns or "잎앞면털" not in df.columns:
+            raise HTTPException(
+                status_code=400,
+                detail="Excel file must contain 'title' and 'description' columns",
+            )
 
         # Create a list of CreateRecordRequestDto
         records = []
         for _, row in df.iterrows():
-            title = row['수종']
-            description = row['코드']
+            title = row["수종"]
+            description = row["코드"]
 
             if (pd.notna(title) and pd.notna(description)) is False:
                 continue
 
-            descriptionList = str(description).split(' ')
+            descriptionList = str(description).split(" ")
             koreanDiscriptionList = []
             for i in descriptionList:
                 koreanDiscriptionList.append(list(BasicTypeEnum)[int(i) - 1].value)
-            koreanDescription = ','.join(koreanDiscriptionList)
-            records.append(CreateRecordRequestDto(index="classify", title=title, description=koreanDescription, column="잎앞면털"))
+            koreanDescription = ",".join(koreanDiscriptionList)
+            records.append(
+                CreateRecordRequestDto(
+                    index="classify",
+                    title=title,
+                    description=koreanDescription,
+                    column="잎앞면털",
+                )
+            )
 
         print(records)
 
@@ -605,8 +711,11 @@ async def create_records_with_excel_leaf_arrangement(
         df = pd.read_excel(BytesIO(contents))
 
         # Ensure the required columns are present
-        if '수종' not in df.columns or '잎차례' not in df.columns:
-            raise HTTPException(status_code=400, detail="Excel file must contain 'title' and 'description' columns")
+        if "수종" not in df.columns or "잎차례" not in df.columns:
+            raise HTTPException(
+                status_code=400,
+                detail="Excel file must contain 'title' and 'description' columns",
+            )
 
         # Create a list of CreateRecordRequestDto
         records = []
@@ -620,16 +729,23 @@ async def create_records_with_excel_leaf_arrangement(
         }
 
         for _, row in df.iterrows():
-            title = row['수종']
-            description = row['코드']
+            title = row["수종"]
+            description = row["코드"]
 
             if pd.notna(title) and pd.notna(description):
-                descriptionList = str(description).strip().split(' ')
+                descriptionList = str(description).strip().split(" ")
                 koreanDiscriptionList = []
                 for i in descriptionList:
                     koreanDiscriptionList.append(mappingTable[i])
-                koreanDescription = ','.join(koreanDiscriptionList)
-                records.append(CreateRecordRequestDto(index="classify", title=title, description=koreanDescription, column="잎차례"))
+                koreanDescription = ",".join(koreanDiscriptionList)
+                records.append(
+                    CreateRecordRequestDto(
+                        index="classify",
+                        title=title,
+                        description=koreanDescription,
+                        column="잎차례",
+                    )
+                )
 
         print(records)
         # Call the PineconeService to create records
@@ -665,24 +781,34 @@ async def create_records_with_excel_tooth(
         df = pd.read_excel(BytesIO(contents))
 
         # Ensure the required columns are present
-        if '수종' not in df.columns or '톱니' not in df.columns:
-            raise HTTPException(status_code=400, detail="Excel file must contain 'title' and 'description' columns")
+        if "수종" not in df.columns or "톱니" not in df.columns:
+            raise HTTPException(
+                status_code=400,
+                detail="Excel file must contain 'title' and 'description' columns",
+            )
 
         # Create a list of CreateRecordRequestDto
         records = []
         for _, row in df.iterrows():
-            title = row['수종']
-            description = row['코드']
+            title = row["수종"]
+            description = row["코드"]
 
             if (pd.notna(title) and pd.notna(description)) is False:
                 continue
 
-            descriptionList = str(description).split(' ')
+            descriptionList = str(description).split(" ")
             koreanDiscriptionList = []
             for i in descriptionList:
                 koreanDiscriptionList.append(list(BasicTypeEnum)[int(i) - 1].value)
-            koreanDescription = ','.join(koreanDiscriptionList)
-            records.append(CreateRecordRequestDto(index="classify", title=title, description=koreanDescription, column="톱니"))
+            koreanDescription = ",".join(koreanDiscriptionList)
+            records.append(
+                CreateRecordRequestDto(
+                    index="classify",
+                    title=title,
+                    description=koreanDescription,
+                    column="톱니",
+                )
+            )
 
         print(records)
 

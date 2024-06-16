@@ -5,7 +5,8 @@ from typing import List
 import pandas as pd
 from fastapi import HTTPException
 
-from src.dtos.pinecone_dto import CreateRecordRequestDto, CreateArrangeRecordRequestDto
+from src.dtos.pinecone_dto import (CreateArrangeRecordRequestDto,
+                                   CreateRecordRequestDto)
 from src.repositories.pinecone_repository import PineconeRepository
 
 logger = logging.getLogger(__name__)
@@ -50,18 +51,15 @@ class PineconeService:
 
         # create a record in the index of pinecone project.
         result = await PineconeRepository.create_record(
-            index=index, description=description,
-            metadata={
-                "title": title,
-                "column": column
-            }
+            index=index,
+            description=description,
+            metadata={"title": title, "column": column},
         )
 
         return result
 
     @staticmethod
     async def create_records(records: List[CreateRecordRequestDto]):
-
         # check if the index exists in the pinecone project before creating a record.
         indexes = PineconeRepository.get_indexes()
         if records[0].index not in indexes:
@@ -77,7 +75,6 @@ class PineconeService:
 
     @staticmethod
     async def create_arrange_records(records: List[CreateArrangeRecordRequestDto]):
-
         # check if the index exists in the pinecone project before creating a record.
         indexes = PineconeRepository.get_indexes()
         if records[0].index not in indexes:
@@ -96,20 +93,21 @@ class PineconeService:
         try:
             df = pd.read_excel(file_path)
             for _, row in df.iterrows():
-                title = row['Title']  # assuming the excel file has a column named 'Title'
-                description = row['Description']  # assuming the excel file has a column named 'Description'
+                title = row[
+                    "Title"
+                ]  # assuming the excel file has a column named 'Title'
+                description = row[
+                    "Description"
+                ]  # assuming the excel file has a column named 'Description'
                 create_record_request_dto = CreateRecordRequestDto(
-                    index=index,
-                    title=title,
-                    description=description
+                    index=index, title=title, description=description
                 )
                 await PineconeService.create_record(create_record_request_dto)
             return {"result": "Excel data loaded successfully into Pinecone"}
         except Exception as e:
             logger.error(f"Error loading Excel data to Pinecone: {str(e)}")
             raise HTTPException(
-                status_code=HTTPStatus.INTERNAL_SERVER_ERROR.value,
-                detail=str(e)
+                status_code=HTTPStatus.INTERNAL_SERVER_ERROR.value, detail=str(e)
             )
 
     @staticmethod
@@ -138,27 +136,37 @@ class PineconeService:
         # title 별로 score 를 취합한다. 이 때, 어느 colmn 에서 얼마의 score 를 받았는지도 함께 반환한다.
         formatted_result = {}
         for item in result.values():
-            for data in item['matches']:
-                title = data['metadata']['title']
-                column = data['metadata']['column']
-                score = data['score']
+            for data in item["matches"]:
+                title = data["metadata"]["title"]
+                column = data["metadata"]["column"]
+                score = data["score"]
 
                 # title 정보가 없으면 추가
                 if title not in formatted_result:
-                    formatted_result[title] = {
-                        "totalScore": 0,
-                        "details": {}
-                    }
+                    formatted_result[title] = {"totalScore": 0, "details": {}}
 
                 formatted_result[title]["totalScore"] += score
                 formatted_result[title]["details"][column] = score
 
         # totalScore 가 높은 순으로 정렬
-        formatted_result = dict(sorted(formatted_result.items(), key=lambda x: x[1]["totalScore"], reverse=True))
+        formatted_result = dict(
+            sorted(
+                formatted_result.items(), key=lambda x: x[1]["totalScore"], reverse=True
+            )
+        )
 
         # 각 title 별로 details 를 score 가 높은 순으로 정렬한다.
         for title in formatted_result.keys():
-            formatted_result[title]["details"] = dict(sorted(formatted_result[title]["details"].items(), key=lambda x: x[1], reverse=True))
+            formatted_result[title]["details"] = dict(
+                sorted(
+                    formatted_result[title]["details"].items(),
+                    key=lambda x: x[1],
+                    reverse=True,
+                )
+            )
+
+        # 상위 5개만 반환
+        formatted_result = dict(list(formatted_result.items())[:5])
 
         return formatted_result
 
