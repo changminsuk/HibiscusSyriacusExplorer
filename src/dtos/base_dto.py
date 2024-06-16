@@ -21,7 +21,7 @@ class SpeciesDto(BaseModel):
 
 
 class GPTQueryResponseDataDto(BaseModel):
-    __root__: Dict[str, SpeciesDto] = Field(
+    species: Dict[str, SpeciesDto] = Field(
         description="Mapping of species names to their similarity scores"
     )
 
@@ -40,18 +40,20 @@ class GPTQueryResponseDto(BaseModel):
                 "success": True,
                 "message": "Succeeded in inferring the species that are similar to the input image.",
                 "data": {
-                    "찰피나무": {
-                        "totalScore": 2.00732351,
-                        "details": {
-                            "톱니": {"value": 1.00587869},
-                            "결각": {"value": 1.00144482},
+                    "species": {
+                        "찰피나무": {
+                            "totalScore": 2.00732351,
+                            "details": {
+                                "톱니": {"value": 1.00587869},
+                                "결각": {"value": 1.00144482},
+                            },
                         },
-                    },
-                    "잣나무": {
-                        "totalScore": 1.8713784809999998,
-                        "details": {
-                            "잎차례": {"value": 1.0039922},
-                            "잎길이": {"value": 0.867386281},
+                        "잣나무": {
+                            "totalScore": 1.8713784809999998,
+                            "details": {
+                                "잎차례": {"value": 1.0039922},
+                                "잎길이": {"value": 0.867386281},
+                            },
                         },
                     },
                 },

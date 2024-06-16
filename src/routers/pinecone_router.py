@@ -3,7 +3,7 @@ from io import BytesIO
 import pandas as pd
 from fastapi import APIRouter, Body, Depends, File, HTTPException, UploadFile
 
-from src.dtos.base_dto import GPTQueryResponseDto, ResponseDto
+from src.dtos.base_dto import GPTQueryResponseDto, ResponseDto, GPTQueryResponseDataDto
 from src.dtos.pinecone_dto import *
 from src.services.pinecone_service import PineconeService
 
@@ -845,7 +845,7 @@ async def query_pinecone(
     return GPTQueryResponseDto(
         success=True,
         message="Succeeded in inferring the species that are similar to the input image.",
-        data=result,
+        data=GPTQueryResponseDataDto(species=result),
     )
 
 
