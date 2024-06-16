@@ -8,7 +8,8 @@ from langchain.embeddings import OpenAIEmbeddings
 from langchain.schema.document import Document
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 
-from src.dtos.pinecone_dto import CreateRecordRequestDto, CreateArrangeRecordRequestDto
+from src.dtos.pinecone_dto import (CreateArrangeRecordRequestDto,
+                                   CreateRecordRequestDto)
 from src.utils import config
 
 
@@ -32,7 +33,7 @@ def process_param(key, value: str, index):
             include_metadata=True,
             filter={
                 "column": {"$eq": korean_key},
-            }
+            },
         )
 
         if not result["matches"]:
@@ -40,11 +41,7 @@ def process_param(key, value: str, index):
 
         serializable_result = {
             "matches": [
-                {
-                    "id": match.id,
-                    "score": match.score,
-                    "metadata": match.metadata
-                }
+                {"id": match.id, "score": match.score, "metadata": match.metadata}
                 for match in result["matches"]
             ]
         }
@@ -54,8 +51,6 @@ def process_param(key, value: str, index):
     except Exception as e:
         print(e)
         return korean_key, None
-
-
 
 
 def process_arrange_param(key, value: float, index):
@@ -79,8 +74,8 @@ def process_arrange_param(key, value: float, index):
             filter={
                 "column": {"$eq": korean_key},
                 "min": {"$lte": value},
-                "max": {"$gte": value}
-            }
+                "max": {"$gte": value},
+            },
         )
 
         if not result["matches"]:
@@ -88,11 +83,7 @@ def process_arrange_param(key, value: float, index):
 
         serializable_result = {
             "matches": [
-                {
-                    "id": match.id,
-                    "score": match.score,
-                    "metadata": match.metadata
-                }
+                {"id": match.id, "score": match.score, "metadata": match.metadata}
                 for match in result["matches"]
             ]
         }
@@ -171,7 +162,7 @@ class PineconeRepository:
                 metadata = {
                     "title": record.title,
                     "column": record.column,
-                    "description": record.description
+                    "description": record.description,
                 }
 
                 splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder()
@@ -184,7 +175,11 @@ class PineconeRepository:
                 vectors = embeddings.embed_documents([doc.page_content for doc in docs])
 
                 pinecone_vectors = [
-                    {"id": str(uuid.uuid4()), "values": vector, "metadata": doc.metadata}
+                    {
+                        "id": str(uuid.uuid4()),
+                        "values": vector,
+                        "metadata": doc.metadata,
+                    }
                     for vector, doc in zip(vectors, docs)
                 ]
 
@@ -230,7 +225,11 @@ class PineconeRepository:
                 vectors = embeddings.embed_documents([doc.page_content for doc in docs])
 
                 pinecone_vectors = [
-                    {"id": str(uuid.uuid4()), "values": vector, "metadata": doc.metadata}
+                    {
+                        "id": str(uuid.uuid4()),
+                        "values": vector,
+                        "metadata": doc.metadata,
+                    }
                     for vector, doc in zip(vectors, docs)
                 ]
 
@@ -274,7 +273,9 @@ class PineconeRepository:
             with ThreadPoolExecutor() as executor:
                 futures = [
                     executor.submit(
-                        process_param if type(value) is not float else process_arrange_param,
+                        process_param
+                        if type(value) is not float
+                        else process_arrange_param,
                         key,
                         value,
                         index,
@@ -305,20 +306,14 @@ class PineconeRepository:
             index = pinecone.Index("classify")
             result = index.query(
                 vector=[0] * 1536,  # Dummy vector for metadata filtering
-                filter={
-                    "title": {"$eq": title}
-                },
+                filter={"title": {"$eq": title}},
                 top_k=100,
-                include_metadata=True
+                include_metadata=True,
             )
 
             serializable_result = {
                 "matches": [
-                    {
-                        "id": match.id,
-                        "score": match.score,
-                        "metadata": match.metadata
-                    }
+                    {"id": match.id, "score": match.score, "metadata": match.metadata}
                     for match in result["matches"]
                 ]
             }
@@ -340,11 +335,9 @@ class PineconeRepository:
             index = pinecone.Index("classify")
             query_result = index.query(
                 vector=[0] * 1536,  # Dummy vector for metadata filtering
-                filter={
-                    "column": {"$eq": column}
-                },
+                filter={"column": {"$eq": column}},
                 top_k=1000,
-                include_metadata=True
+                include_metadata=True,
             )
 
             # Extract IDs from query result
@@ -353,7 +346,9 @@ class PineconeRepository:
             # Delete vectors by IDs
             index.delete(ids=ids_to_delete)
 
-            return {"result": f"{column} deleted successfully! {len(ids_to_delete)} records deleted."}
+            return {
+                "result": f"{column} deleted successfully! {len(ids_to_delete)} records deleted."
+            }
         except Exception as e:
             raise HTTPException(
                 status_code=HTTPStatus.INTERNAL_SERVER_ERROR.value, detail=str(e)
