@@ -22,33 +22,40 @@ def process_param(key, value: str, index):
             detail=f"Missing parameter: {korean_key}",
         )
 
-    embeddings = OpenAIEmbeddings()
-    vector = embeddings.embed_query(value)
+    try:
+        embeddings = OpenAIEmbeddings()
+        vector = embeddings.embed_query(value)
 
-    result = index.query(
-        vector=vector,
-        top_k=30,
-        include_metadata=True,
-        filter={
-            "column": {"$eq": korean_key},
+        result = index.query(
+            vector=vector,
+            top_k=30,
+            include_metadata=True,
+            filter={
+                "column": {"$eq": korean_key},
+            }
+        )
+
+        if not result["matches"]:
+            return korean_key, None
+
+        serializable_result = {
+            "matches": [
+                {
+                    "id": match.id,
+                    "score": match.score,
+                    "metadata": match.metadata
+                }
+                for match in result["matches"]
+            ]
         }
-    )
 
-    if not result["matches"]:
+        return korean_key, serializable_result
+
+    except Exception as e:
+        print(e)
         return korean_key, None
 
-    serializable_result = {
-        "matches": [
-            {
-                "id": match.id,
-                "score": match.score,
-                "metadata": match.metadata
-            }
-            for match in result["matches"]
-        ]
-    }
 
-    return korean_key, serializable_result
 
 
 def process_arrange_param(key, value: float, index):
@@ -61,35 +68,40 @@ def process_arrange_param(key, value: float, index):
             detail=f"Missing parameter: {korean_key}",
         )
 
-    embeddings = OpenAIEmbeddings()
-    vector = embeddings.embed_query(korean_key)
+    try:
+        embeddings = OpenAIEmbeddings()
+        vector = embeddings.embed_query(korean_key)
 
-    result = index.query(
-        vector=vector,
-        top_k=30,
-        include_metadata=True,
-        filter={
-            "column": {"$eq": korean_key},
-            "min": {"$lte": value},
-            "max": {"$gte": value}
-        }
-    )
-
-    if not result["matches"]:
-        return korean_key, None
-
-    serializable_result = {
-        "matches": [
-            {
-                "id": match.id,
-                "score": match.score,
-                "metadata": match.metadata
+        result = index.query(
+            vector=vector,
+            top_k=30,
+            include_metadata=True,
+            filter={
+                "column": {"$eq": korean_key},
+                "min": {"$lte": value},
+                "max": {"$gte": value}
             }
-            for match in result["matches"]
-        ]
-    }
+        )
 
-    return korean_key, serializable_result
+        if not result["matches"]:
+            return korean_key, None
+
+        serializable_result = {
+            "matches": [
+                {
+                    "id": match.id,
+                    "score": match.score,
+                    "metadata": match.metadata
+                }
+                for match in result["matches"]
+            ]
+        }
+
+        return korean_key, serializable_result
+
+    except Exception as e:
+        print(e)
+        return korean_key, None
 
 
 class PineconeRepository:
